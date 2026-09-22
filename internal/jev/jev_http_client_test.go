@@ -221,11 +221,6 @@ func TestClassifyTestsRejectsMalformedResponses(t *testing.T) {
 			primary := answers[PrimaryQuestionID].(map[string]any)
 			primary["choice"] = "functional"
 		}},
-		{name: "choice is not argmax", mutate: func(d map[string]any) {
-			answers := d["answers"].(map[string]any)
-			primary := answers[PrimaryQuestionID].(map[string]any)
-			primary["choice"] = string(classification.PrimarySmoke)
-		}},
 		{name: "probabilities do not sum to one", mutate: func(d map[string]any) {
 			answers := d["answers"].(map[string]any)
 			primary := answers[PrimaryQuestionID].(map[string]any)

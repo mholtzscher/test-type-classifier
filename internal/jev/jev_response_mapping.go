@@ -127,8 +127,6 @@ func validatePrimaryAnswer(answer apiAnswer) (classification.PrimaryTestType, ma
 	}
 	probabilities := make(map[classification.PrimaryTestType]float64, len(answer.Probabilities))
 	sum := 0.0
-	argmax := ""
-	argmaxProbability := -1.0
 	for label, probability := range answer.Probabilities {
 		parsed, ok := classification.ParsePrimaryTestType(label)
 		if !ok {
@@ -139,19 +137,12 @@ func validatePrimaryAnswer(answer apiAnswer) (classification.PrimaryTestType, ma
 		}
 		probabilities[parsed] = probability
 		sum += probability
-		if probability > argmaxProbability {
-			argmaxProbability = probability
-			argmax = label
-		}
 	}
 	if math.Abs(sum-1) > probabilitySumTolerance {
 		return "", nil, 0, &ResponseError{Reason: fmt.Sprintf("probabilities sum to %.4f", sum)}
 	}
 	if _, ok := answer.Probabilities[answer.Choice]; !ok {
 		return "", nil, 0, &ResponseError{Reason: "choice " + answer.Choice + " is not in probabilities"}
-	}
-	if answer.Choice != argmax {
-		return "", nil, 0, &ResponseError{Reason: "choice " + answer.Choice + " is not the highest-probability label"}
 	}
 	return primary, probabilities, confidence, nil
 }
